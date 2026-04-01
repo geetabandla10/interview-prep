@@ -32,6 +32,7 @@
   "env": {
     "NODE_ENV": "production",
     "SUPABASE_URL": "https://kigogwwsmwcvhbtknwbd.supabase.co",
-    "SUPABASE_ANON_KEY": "sb_publishable_C6DX9cZxKWP7cnmW76DgKQ_iunAXkBq"
+    "SUPABASE_ANON_KEY": "sb_publishable_C6DX9cZxKWP7cnmW76DgKQ_iunAXkBq",
+    "GOOGLE_CLIENT_ID": "394857756672-22jmml7hmc97gv3lrshd2nkjvcs4s2ro.apps.googleusercontent.com"
   }
 }
