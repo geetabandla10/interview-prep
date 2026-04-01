@@ -75,15 +75,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/interviews', interviewRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, '../../frontend/dist')));
-
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ message: 'AI Interview Prep Coach API is running' });
+  res.json({ message: 'AI Interview Prep Coach API (Serverless) is running' });
 });
 
-// SPA catch-all
+// Serve static files from the React frontend app if needed (optional for Vercel functions, but keeping consistency)
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
+
+// SPA catch-all (important for routing)
 app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, '../../frontend/dist', 'index.html'));
 });
@@ -94,7 +94,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
-});
+// Export app for serverless deployment
+module.exports = app;
+
+// Start server ONLY if not in a serverless environment (local dev)
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server is running on port: ${port}`);
+  });
+}
