@@ -2,7 +2,9 @@ const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const prisma = require('../utils/prisma');
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+// Use .trim() to prevent invisible space/newline errors from .env loading
+const googleClientId = (process.env.GOOGLE_CLIENT_ID || '').trim();
+const client = new OAuth2Client(googleClientId);
 
 const googleLogin = async (req, res) => {
   try {
@@ -15,7 +17,7 @@ const googleLogin = async (req, res) => {
     // 1. Verify Google token
     const ticket = await client.verifyIdToken({
       idToken: credential,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: googleClientId,
     });
     
     const payload = ticket.getPayload();
