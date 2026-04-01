@@ -1,0 +1,20 @@
+{
+  "name": "interview-prep-project",
+  "version": "1.0.0",
+  "description": "Unified Development Environment for AI Interview Prep Coach",
+  "main": "index.js",
+  "scripts": {
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install-all": "npm install && npm run install:backend && npm run install:frontend",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build",
+    "build-all": "npm run build:frontend",
+    "start:integrated": "npm run build:frontend && npm run server",
+    "dev": "concurrently \"npm run server\" \"npm run client\" --kill-others --prefix-colors \"bgBlue.bold,bgGreen.bold\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

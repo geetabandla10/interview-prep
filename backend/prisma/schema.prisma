@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model User {
+  id         String    @id @default(uuid())
+  email      String    @unique
+  name       String?
+  googleId   String?   @unique
+  profilePic String?
+  role       UserRole  @default(USER)
+  sessions   Session[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Session {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        String
+  difficulty  Difficulty @default(MEDIUM)
+  companyType String?
+  totalScore  Float      @default(0.0)
+  questions   Question[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  summaryGood    String?   @db.Text
+  summaryMissing String?   @db.Text
+
+  @@index([userId])
+}
+
+model Question {
+  id           String   @id @default(uuid())
+  sessionId    String
+  session      Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionText String
+  answer       Answer?
+  createdAt    DateTime @default(now())
+
+  @@index([sessionId])
+}
+
+model Answer {
+  id          String   @id @default(uuid())
+  questionId  String   @unique
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userAnswer  String   @db.Text
+  score       Float    @default(0.0)
+  good        String?  @db.Text
+  missing     String?  @db.Text
+  ideal       String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  @@index([questionId])
+}

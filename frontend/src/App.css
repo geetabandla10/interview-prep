@@ -1,0 +1,6 @@
+/* App.css — intentionally minimal, all design tokens live in index.css */
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
