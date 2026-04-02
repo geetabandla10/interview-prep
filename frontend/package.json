@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "VITE_GOOGLE_CLIENT_ID=394857756672-22jmml7hmc97gv3lrshd2nkjvcs4s2ro.apps.googleusercontent.com vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
