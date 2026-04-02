@@ -15,6 +15,10 @@ if (!process.env.JWT_SECRET) {
   process.exit(1);
 }
 
+if (!process.env.GOOGLE_CLIENT_ID) {
+  console.error('WARNING: GOOGLE_CLIENT_ID is not set. Google Login will fail.');
+}
+
 const app = express();
 const port = process.env.PORT || 5000;
 

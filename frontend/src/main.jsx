@@ -8,7 +8,11 @@ import { ThemeProvider } from './context/ThemeContext.jsx';
 import App from './App.jsx';
 
 // Normally stored in .env, placeholder used if undefined
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'your-google-client-id';
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+
+if (!clientId) {
+  console.error("VITE_GOOGLE_CLIENT_ID is not defined. Google Login will not work.");
+}
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
