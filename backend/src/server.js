@@ -66,9 +66,15 @@ const authRoutes = require('./routes/authRoutes');
 const interviewRoutes = require('./routes/interviewRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
-app.use('/api/auth', authRoutes);
-app.use('/api/interviews', interviewRoutes);
-app.use('/api/admin', adminRoutes);
+// Mount routes - handling both prefixed and non-prefixed for Vercel Services compatibility
+const mountRoutes = (prefix) => {
+  app.use(`${prefix}/auth`, authRoutes);
+  app.use(`${prefix}/interviews`, interviewRoutes);
+  app.use(`${prefix}/admin`, adminRoutes);
+};
+
+mountRoutes('/api'); // Local dev & Legacy
+mountRoutes('');     // Vercel Services (where /api is stripped)
 
 // Health check
 app.get('/api/health', (req, res) => {
