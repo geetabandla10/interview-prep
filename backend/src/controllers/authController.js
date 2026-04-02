@@ -60,7 +60,18 @@ const googleLogin = async (req, res) => {
     });
   } catch (error) {
     console.error('Error during Google Login:', error);
-    res.status(500).json({ error: 'Authentication failed' });
+    
+    // Provide a more descriptive error message in development/deployment phase
+    let errorMessage = 'Authentication failed';
+    if (error.message && error.message.includes('Can\'t reach database server')) {
+      errorMessage = 'Database connection failed. Please check your DATABASE_URL in Vercel.';
+    } else if (error.message && error.message.includes('Wrong recipient')) {
+      errorMessage = 'Invalid Google Client ID. Please check your GOOGLE_CLIENT_ID in Vercel.';
+    } else {
+      errorMessage = `Login error: ${error.message || 'Internal Server Error'}`;
+    }
+
+    res.status(500).json({ error: errorMessage });
   }
 };
 

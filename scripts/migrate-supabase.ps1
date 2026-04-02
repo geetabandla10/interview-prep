@@ -19,8 +19,8 @@ if (-not $plainPassword) {
 }
 
 # Construct Connection String
-# Note: Using port 5432 for Direct Connection. Use 6543 for Pooling if needed.
-$DATABASE_URL = "postgresql://postgres:$($plainPassword)@$($SUPABASE_HOST):5432/postgres"
+# Note: Switching to port 6543 (Transaction Pooler) to bypass local firewall/network blocks
+$DATABASE_URL = "postgresql://postgres:$($plainPassword)@$($SUPABASE_HOST):6543/postgres?pgbouncer=true"
 
 Write-Host "`nConnecting to $SUPABASE_HOST..." -ForegroundColor Yellow
 

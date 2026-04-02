@@ -10,14 +10,12 @@ const { sanitizeBody } = require('./middlewares/validate');
 dotenv.config();
 
 // Fail fast if critical secrets are missing
-if (!process.env.JWT_SECRET) {
-  console.error('FATAL: JWT_SECRET is not set in .env');
-  process.exit(1);
-}
-
-if (!process.env.GOOGLE_CLIENT_ID) {
-  console.error('WARNING: GOOGLE_CLIENT_ID is not set. Google Login will fail.');
-}
+const requiredSecrets = ['DATABASE_URL', 'JWT_SECRET', 'GOOGLE_CLIENT_ID'];
+requiredSecrets.forEach(secret => {
+  if (!process.env[secret]) {
+    console.warn(`WARNING: ${secret} is NOT set in environment variables!`);
+  }
+});
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -27,22 +25,13 @@ const port = process.env.PORT || 5000;
 // Security headers (disable CSP for SPA serving)
 app.use(helmet({ contentSecurityPolicy: false }));
 
-// CORS - restrict to known origins
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://localhost:5000',
-  'http://127.0.0.1:5000',
-  process.env.FRONTEND_URL,
-].filter(Boolean);
-
+// CORS - allow localhost and vercel domains
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, same-origin)
-    if (!origin || allowedOrigins.includes(origin) || origin.includes('localhost')) {
+    if (!origin || origin.includes('localhost') || origin.includes('vercel.app')) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error(`CORS Error: Origin ${origin} not allowed`));
     }
   },
   credentials: true,

@@ -1,14 +1,19 @@
 const { PrismaClient } = require('@prisma/client');
-const { Pool } = require('pg');
-const { PrismaPg } = require('@prisma/adapter-pg');
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Use a singleton pattern to prevent too many connections in development
+let prisma;
 
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-});
-
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+if (process.env.NODE_ENV === 'production') {
+  prisma = new PrismaClient({
+    log: ['error', 'warn'],
+  });
+} else {
+  if (!global.prisma) {
+    global.prisma = new PrismaClient({
+      log: ['query', 'error', 'warn'],
+    });
+  }
+  prisma = global.prisma;
+}
 
 module.exports = prisma;
