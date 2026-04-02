@@ -59,9 +59,11 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(userData));
       return { success: true };
     } catch (error) {
-      console.error('Google login error:', error);
-      const errorMessage = error.response?.data?.error || 'Login failed';
-      return { success: false, error: errorMessage };
+      console.error('Full Google login error:', error);
+      const status = error.response?.status;
+      const serverError = error.response?.data?.error;
+      const message = serverError ? `[${status}] ${serverError}` : error.message;
+      return { success: false, error: `Login error: ${message}` };
     }
   }, []);
 
