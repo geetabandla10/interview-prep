@@ -11,7 +11,7 @@
     "client": "cd frontend && npm run dev",
     "build:frontend": "cd frontend && npm run build",
     "build:backend": "cd backend && npx prisma generate",
-    "build": "npm run build:frontend && npm run build:backend",
+    "build": "npm run build:frontend && npm run build:backend && mkdir -p public && cp -r frontend/dist/* public/",
     "dev": "concurrently \"npm run server\" \"npm run client\" --kill-others --prefix-colors \"bgBlue.bold,bgGreen.bold\""
   },
   "dependencies": {
