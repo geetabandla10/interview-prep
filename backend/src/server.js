@@ -76,9 +76,19 @@ const mountRoutes = (prefix) => {
 mountRoutes('/api'); // Local dev & Legacy
 mountRoutes('');     // Vercel Services (where /api is stripped)
 
-// Health check
+// Health check with environment status (masked secrets)
 app.get('/api/health', (req, res) => {
-  res.json({ message: 'AI Interview Prep Coach API (Serverless) is running' });
+  res.json({
+    status: 'ok',
+    message: 'AI Interview Prep Coach API (Serverless) is running',
+    environment: process.env.NODE_ENV,
+    configStatus: {
+      hasGoogleClientId: !!process.env.GOOGLE_CLIENT_ID,
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+      googleClientIdPrefix: process.env.GOOGLE_CLIENT_ID ? `${process.env.GOOGLE_CLIENT_ID.slice(0, 6)}...` : 'not set',
+    }
+  });
 });
 
 // Serve static files from the React frontend app if needed (optional for Vercel functions, but keeping consistency)
