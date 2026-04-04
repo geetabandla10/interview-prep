@@ -75,6 +75,46 @@ const googleLogin = async (req, res) => {
   }
 };
 
+const demoLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (email !== 'demo@example.com' || password !== 'demo123') {
+      return res.status(401).json({ error: 'Invalid demo credentials' });
+    }
+
+    let user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email,
+          name: 'Demo User',
+          profilePic: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Demo',
+        },
+      });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.status(200).json({
+      message: 'Demo login successful',
+      token,
+      user,
+    });
+  } catch (error) {
+    console.error('Error during Demo Login:', error);
+    res.status(500).json({ error: 'Authentication failed' });
+  }
+};
+
 module.exports = {
   googleLogin,
+  demoLogin,
 };

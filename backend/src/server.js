@@ -94,8 +94,14 @@ app.get('/api/health', (req, res) => {
 // Serve static files from the React frontend app if needed (optional for Vercel functions, but keeping consistency)
 app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 
+// API catch-all (404 for undefined API routes)
+app.all('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API route not found' });
+});
+
 // SPA catch-all (important for routing)
-app.get(/.*/, (req, res) => {
+app.get(/.*/, (req, res, next) => {
+  if (req.path.startsWith('/api')) { return next(); }
   res.sendFile(path.join(__dirname, '../../frontend/dist', 'index.html'));
 });
 

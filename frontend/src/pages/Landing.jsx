@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Rocket, Shield, Zap, Target, Star, ArrowRight, Brain, Sparkles, TrendingUp } from 'lucide-react';
 
 const Landing = () => {
-  const { isAuthenticated, loginWithGoogle } = useAuth();
+  const { isAuthenticated, loginWithGoogle, loginWithDemo } = useAuth();
   const navigate = useNavigate();
   const heroRef = useRef(null);
 
@@ -18,6 +18,12 @@ const Landing = () => {
     const res = await loginWithGoogle(response.credential);
     if (!res.success) alert(res.error);
   };
+
+  const handleDemo = async () => {
+    const res = await loginWithDemo();
+    if (!res.success) alert(res.error);
+  };
+
 
   // Stagger children
   const container = {
@@ -141,6 +147,31 @@ const Landing = () => {
                 size="large"
               />
             </div>
+            <button
+              onClick={handleDemo}
+              style={{
+                marginTop: '0.2rem',
+                padding: '0.65rem 1.5rem',
+                background: 'transparent',
+                border: '1px solid rgba(var(--primary-rgb), 0.3)',
+                borderRadius: '2rem',
+                color: 'var(--text-main)',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(var(--primary-rgb), 0.05)';
+                e.target.style.borderColor = 'rgba(var(--primary-rgb), 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'transparent';
+                e.target.style.borderColor = 'rgba(var(--primary-rgb), 0.3)';
+              }}
+            >
+              Try Demo Account
+            </button>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-subtle)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Shield size={13} style={{ color: '#10b981' }} />
               No credit card required &bull; Start in 30 seconds
@@ -270,6 +301,35 @@ const Landing = () => {
               />
             </div>
           </div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+            <button
+              onClick={handleDemo}
+              style={{
+                padding: '0.65rem 1.5rem',
+                background: 'transparent',
+                border: '1px solid rgba(var(--primary-rgb), 0.3)',
+                borderRadius: '2rem',
+                color: 'var(--text-main)',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(var(--primary-rgb), 0.05)';
+                e.target.style.borderColor = 'rgba(var(--primary-rgb), 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'transparent';
+                e.target.style.borderColor = 'rgba(var(--primary-rgb), 0.3)';
+              }}
+            >
+              Try Demo Account
+            </button>
+          </div>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-subtle)', marginTop: '1.5rem' }}>
+            No credit card required. Free tier available.
+          </p>
         </div>
       </motion.div>
     </div>

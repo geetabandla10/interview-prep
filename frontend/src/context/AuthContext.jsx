@@ -25,6 +25,12 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       localStorage.setItem('token', token);
       
+      if (token === 'demo-offline-token') {
+        // Skip JWT validation for local offline demo token
+        setLoading(false);
+        return;
+      }
+
       try {
         const decoded = jwtDecode(token);
         // Simple expiry check
@@ -50,8 +56,9 @@ export const AuthProvider = ({ children }) => {
   }, [token, logout]);
 
   const loginWithGoogle = useCallback(async (credential) => {
+    const apiUrl = import.meta.env.VITE_API_URL || '';
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google`, { credential });
+      const response = await axios.post(`${apiUrl}/api/auth/google`, { credential });
       const { token: newToken, user: userData } = response.data;
       
       setToken(newToken);
@@ -67,14 +74,39 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const loginWithDemo = useCallback(async () => {
+    try {
+      const demoToken = 'demo-offline-token';
+      const demoUser = {
+        id: 'demo-user-id',
+        email: 'demo@example.com',
+        name: 'Demo User',
+        role: 'USER',
+        profilePic: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Demo'
+      };
+      
+      setToken(demoToken);
+      setUser(demoUser);
+      localStorage.setItem('user', JSON.stringify(demoUser));
+      // Intercept axios to use demo token locally
+      axios.defaults.headers.common['Authorization'] = `Bearer ${demoToken}`;
+      return { success: true };
+    } catch (error) {
+      console.error('Demo login error:', error);
+      return { success: false, error: 'Demo login setup failed locally.' };
+    }
+  }, []);
+
+
   const value = useMemo(() => ({
     user,
     token,
     loading,
     loginWithGoogle,
+    loginWithDemo,
     logout,
     isAuthenticated: !!token,
-  }), [user, token, loading, loginWithGoogle, logout]);
+  }), [user, token, loading, loginWithGoogle, loginWithDemo, logout]);
 
   return (
     <AuthContext.Provider value={value}>

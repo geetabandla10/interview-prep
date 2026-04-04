@@ -43,3 +43,6 @@ Thumbs.db
 
 # ── Vite Cache ───────────────────────────────────────────────
 frontend/.vite/
+
+.vercel
+.env*.local

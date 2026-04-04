@@ -9,8 +9,23 @@ const startSession = async (req, res) => {
     const { role, difficulty, companyType } = req.body;
     const userId = req.user.id; // From verifyToken middleware
 
-    if (!role || !difficulty) {
-      return res.status(400).json({ error: 'Role and difficulty are required' });
+    if (userId === 'demo-user-id') {
+      // Mock session for Demo User
+      const mockSessionId = 'demo-session-' + Date.now();
+      const mockQuestions = [
+        { id: 'q1', sessionId: mockSessionId, questionText: 'Tell me about yourself. (Demo Mode)' },
+        { id: 'q2', sessionId: mockSessionId, questionText: 'Why do you want this role? (Demo Mode)' }
+      ];
+      return res.status(201).json({
+        id: mockSessionId,
+        userId,
+        role,
+        difficulty,
+        companyType,
+        totalScore: 0,
+        questions: mockQuestions,
+        createdAt: new Date().toISOString()
+      });
     }
 
     // 1. Create the session in the database
@@ -60,6 +75,19 @@ const submitAnswer = async (req, res) => {
 
     if (!sessionId || !questionId || !userAnswer) {
       return res.status(400).json({ error: 'Session ID, question ID, and user answer are required' });
+    }
+
+    if (req.user.id === 'demo-user-id') {
+       // Mock answer submission
+       return res.status(201).json({
+         id: 'ans-demo',
+         questionId,
+         userAnswer,
+         score: 8.5,
+         good: 'Great use of the STAR method!',
+         missing: 'Could have detailed the technical constraints more.',
+         ideal: 'A strong candidate would mention specific metrics.'
+       });
     }
 
     // 1. Fetch the question text for evaluation
@@ -112,6 +140,10 @@ const getUserSessions = async (req, res) => {
   try {
     const userId = req.user.id;
 
+    if (userId === 'demo-user-id') {
+      return res.status(200).json([]); // Return empty history for Demo
+    }
+
     const sessions = await prisma.session.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
@@ -135,6 +167,22 @@ const getUserSessions = async (req, res) => {
 const getSessionDetails = async (req, res) => {
   try {
      const { id } = req.params;
+
+     if (req.user.id === 'demo-user-id') {
+        return res.status(200).json({
+          id,
+          userId: 'demo-user-id',
+          role: 'Demo Role',
+          difficulty: 'MEDIUM',
+          totalScore: 8.5,
+          questions: [
+            { id: 'q1', questionText: 'Tell me about yourself. (Demo Mode)', answer: { userAnswer: 'I am a demo user.', score: 8.5, good: 'Direct.', missing: 'Context.' } }
+          ],
+          summaryGood: 'Good standard answers.',
+          summaryMissing: 'Lacked depth.',
+          createdAt: new Date().toISOString()
+        });
+     }
      
      let session = await prisma.session.findUnique({
         where: { id },

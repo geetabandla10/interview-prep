@@ -12,12 +12,14 @@
     "build:frontend": "cd frontend && npm run build",
     "build:backend": "cd backend && npx prisma generate",
     "build": "npm run build:frontend && npm run build:backend && mkdir -p public && cp -r frontend/dist/* public/",
-    "dev": "concurrently \"npm run server\" \"npm run client\" --kill-others --prefix-colors \"bgBlue.bold,bgGreen.bold\""
+    "dev": "concurrently \"npm run server\" \"npm run client\" --kill-others --prefix-colors \"bgBlue.bold,bgGreen.bold\"",
+    "postinstall": "npx prisma generate --schema=./backend/prisma/schema.prisma"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.6.0",
     "cors": "^2.8.6",
+    "@supabase/supabase-js": "^2.101.1",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "express-rate-limit": "^8.3.2",
